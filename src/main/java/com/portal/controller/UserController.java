@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.portal.dto.UserDetails;
 import com.portal.exception.ResourceNotFoundException;
 import com.portal.model.User;
 import com.portal.repository.UserRepository;
+import com.portal.services.SequenceGeneratorService;
 import com.portal.services.UserService;
 
  
@@ -42,6 +42,8 @@ public class UserController {
   @Autowired 
   private ModelMapper mapper;
 
+	@Autowired
+	private SequenceGeneratorService sequenceGeneratorService;
   /**
    * Get all users list.
    *
@@ -79,6 +81,7 @@ public class UserController {
    */
   @PostMapping
   public ResponseEntity<Object>  createUser(@Valid @RequestBody User user) {
+	  user.setId(sequenceGeneratorService.generateSequence(User.SEQUENCE_NAME));
 	  return new ResponseEntity<>(convertToDto(userRepository.save(user)), HttpStatus.OK);
   }
 
